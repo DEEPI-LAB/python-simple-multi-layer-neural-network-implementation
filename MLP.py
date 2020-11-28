@@ -28,7 +28,7 @@ b2 = np.random.randn(1)
 # epoch
 ep = 20000
 # learning rate
-lr = 1
+lr =1
 mse = []
 
 # Neural Networks 2-2-1
@@ -73,11 +73,11 @@ for i in range(ep):
 
     # plot graph
     
-    # if i%100 == 0:
-    #     plt.xlabel('EPOCH')
-    #     plt.ylabel('MSE')
-    #     plt.title('MLP TEST')
-    #     plt.plot(mse)
-    #     plt.show()
+    if i%100 == 0:
+        plt.xlabel('EPOCH')
+        plt.ylabel('MSE')
+        plt.title('MLP TEST')
+        plt.plot(mse)
+        plt.show()
 
     
