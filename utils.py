@@ -103,13 +103,12 @@ def Train(Layer,ep=10000,lr=1):
 
 
     
-#%% 
+#%% Run
 
 x,y = utils.genData(0)
 
 weight_1 = utils.dense(2,2)
 weight_2 = utils.dense(2,2)
-weight_3 = utils.dense(2,1)
 
-Layer = layers(x,y,weight_1,weight_2,weight_3)
+Layer = layers(x,y,weight_1,weight_2)
 Train(Layer,30000,0.5)

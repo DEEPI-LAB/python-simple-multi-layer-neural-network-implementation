@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Neural Network Multi-Layer Perseptron (XOR Problem)
+Neural Networks Representation of
+AND, OR and XOR Logic Gates - Perceptron Algorithm
 @author: Deep.I Inc. @Jongwon Kim
-Revision date: 2020-11-28
+Revision date: 2020-11-29
 See here for more information :
     https://deep-eye.tistory.com/16
     https://deep-i.net
