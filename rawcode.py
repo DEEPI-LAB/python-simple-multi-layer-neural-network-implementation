@@ -74,11 +74,9 @@ for i in range(ep):
 
     # plot graph
     
-    if i%100 == 0:
+    if i%500 == 0:
         plt.xlabel('EPOCH')
         plt.ylabel('MSE')
         plt.title('MLP TEST')
         plt.plot(mse)
         plt.show()
-
-    
