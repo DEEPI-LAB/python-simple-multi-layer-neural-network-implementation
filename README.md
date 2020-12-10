@@ -17,9 +17,11 @@ You should install **numpy** and **matplotlib** for clustering and visualization
 ### Training Options
     Option = MLP.option(ep = 10000,lr = 1,'sigmoid','gd',visualization = True)
 ###  Training
+    MLP = MLP()
     MLP.Train(Layer,Option)
 ## Test MLP
-Open the **runDemo file**. You can just click **F5** in an **IDE environment** to see the sample data results.
+1. Open the **runDemo file**. You can just click **F5** in an **IDE environment** to see the sample data results.
+
 
 ![results](https://blog.kakaocdn.net/dn/bfBwoQ/btqPKuqgYMq/lpKcNXNJm6OK8BvNm7KyR0/img.png)
 ## Author

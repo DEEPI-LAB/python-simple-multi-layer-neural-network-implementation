@@ -9,10 +9,10 @@ See here for more information :
     https://deep-i.net
 """
 import numpy as np
-from matplotlib import pyplot as plt
+import matplotlib.pyplot as plt
 
 class MLP():
-    
+
     # Generate Simple logic Gate dataset
     def genLogicData(dtype = 'XOR'):
         x = np.array([[0,0],[0,1],[1,0],[1,1]],dtype=np.float64)
@@ -24,6 +24,9 @@ class MLP():
             y = np.array([0,0,0,1],dtype=np.float64)
         else: raise Exception('No matching logic gates found')
         return x,y
+
+    # def genMnistData(dtype = 'train'):
+    #     pass
 
     # Weights
     def dense(input_dim,output_dim):
@@ -46,19 +49,35 @@ class MLP():
             Layer['layer_{}_b'.format(ii)] = np.random.randn(i.shape[1])
         Layer['output'] = outputY
         return Layer
-    
-    # def activation(types):
-    #     if types == 'sigmoid':
+
+    def activation(self,types):
+        # 0 : Sigmoid 1 : tanh 2  :ReLu
+        if types == 'sigmoid': return 0
+        elif types =='tanh' : return 1
+        elif types == 'ReLu' : return 2
+        else: raise Exception('No matching avtivataion function found')
+
+    def loss(self,types):
+        # 0 : gd 1 : momentum 2  :adam
+        if types == 'gd': return 0
+        elif types =='momentum' : return 1
+        elif types == 'adam' : return 2
+        else: raise Exception('No matching loss function found')
+        
+    def sigmoidFeed(self,iweight,oweight,bias):
+        return 1 / (1 + np.exp(-(iweight.dot(oweight) + np.vstack([bias * iweight.shape[0]]))))
+    def sigmoidBack(self,iweight,oweight):
+        try: return iweight * (oweight * (1-oweight))
+        except: return iweight.T.dot(oweight * (1-oweight))
 
     #%% MLP Train
-    def Train(Layer,Option):
+    def Train(self,Layer,Option):
 
         ep = Option['ep']
         lr = Option['lr']
-        # af = acivation(Option['activation'])
-        # loss = loss(Option['loss'])
-        
-        
+        af = self.activation(Option['activation'])
+        loss = self.loss(Option['loss'])
+
         input_num,input_dim = Layer['input'].shape
         result = []
         mse = []
@@ -70,9 +89,8 @@ class MLP():
             # FEEDFORWARD
             for mm,m in enumerate(H):
                 if mm == int(len(Layer)/2)-1: break
-                H[mm+1] = 1 / (1 + np.exp(-(m.dot(
-                                         Layer['layer_{}_w'.format(mm)]) +
-                                         np.vstack([Layer['layer_{}_b'.format(mm)]]*m.shape[0]))))
+                if af == 0 : H[mm+1] = self.sigmoidFeed(m,Layer['layer_{}_w'.format(mm)],
+                                                        Layer['layer_{}_b'.format(mm)])
 
             E =  (Layer['output'] - H[-1].T).T
             Z = [[] for i in range(int(len(Layer)/2))]
@@ -81,10 +99,7 @@ class MLP():
             # BACK-PROPAGATION
             for mm,m in enumerate(Z):
                 if mm == int(len(Layer)/2)-1: break
-                try:
-                    Z[mm+1] = m*(H[-(mm+1)] * (1-H[-(mm+1)]))
-                except:
-                    Z[mm+1] = m.T.dot(H[-(mm+1)] * (1-H[-(mm+1)]))
+                if af == 0 : Z[mm+1] = self.sigmoidBack(m,H[-(mm+1)])
 
             # UPDATE
             for i in range(int(len(Layer)/2)-1):
@@ -96,27 +111,26 @@ class MLP():
                           (lr * Z[-(i+1)]*H[i].T)
 
             result.append(np.mean(E**2))
+            if z%50 == 0:
 
-            print('EPOCH : %05d  MSE : %.04f    RESULTS : 0 0 -> %.03f 0 1 -> %.03f 1 0 -> %.03f 1 1 -> %.03f'
-                  %(z,result[-1],np.round(H[-1][0],3),np.round(H[-1][1],3),np.round(H[-1][2],3),np.round(H[-1][3],3)))
+                print('EPOCH : %05d  MSE : %.04f    RESULTS : 0 0 -> %.03f 0 1 -> %.03f 1 0 -> %.03f 1 1 -> %.03f'
+                      %(z,result[-1],np.round(H[-1][0],3),np.round(H[-1][1],3),np.round(H[-1][2],3),np.round(H[-1][3],3)))
 
-            if Option['visualization'] == True:
-                    mse.append(np.mean(E**2))
-
-                    # plot graph
-                    if z%100 == 0:
-                        plt.xlabel('EPOCH')
-                        plt.ylabel('MSE')
-                        plt.title('MLP TEST')
-                        plt.plot(mse)
-                        plt.show()
+                if Option['visualization'] == True:
+                    mse = np.mean(E**2)
+                    plt.xlabel('EPOCH')
+                    plt.ylabel('MSE')
+                    plt.title('MLP TEST')
+                    plt.scatter(z, mse, s = 2,c='red')
+                    plt.pause(0.001)
+        plt.show()
 
     def option(ep = 10000, lr = 1,  activation = 'sigmoid',loss = 'gd',flag = True):
 
         Option = dict()
         Option['lr'] = lr
         Option['ep'] = ep
-        Option['acitivation'] = activation
+        Option['activation'] = activation
         Option['loss'] = loss
         Option['visualization'] = flag
         return Option
